@@ -4,6 +4,7 @@ import {
   ButtonGroup,
   Flex,
   HStack,
+  Image,
   IconButton,
   Input,
   SkeletonText,
@@ -16,11 +17,14 @@ import {
   GoogleMap,
   Marker,
   Autocomplete,
+  InfoBox,
+  InfoWindow,
   useLoadScript,
   DirectionsRenderer,
 } from '@react-google-maps/api'
 import { useRef, useState, useCallback, useEffect } from 'react'
 import React from 'react'
+import TwitterFeed from './TwitterFeed'
 
 const center = {lat:54.976489, lng:-1.60786674}
 
@@ -43,12 +47,17 @@ function App() {
   const [icon, setIcon] = useState("")
   const [markers, setMarkers] = useState()
   const [SNE, setSNE] = useState({lat:54.976489, lng:-1.60786674});
+  const [tweets, setTweets] = useState([])
+  const [tweetsWithGeo, setTweetsWithGeo] = useState([])
+  const [tweetsLocations, setTweetsLocations] = useState([])
+  const [tweetsLocationsWithId, setTweetsLocationsWithId] = useState([])
+  const [tweetArrayBbox, setTweetArrayBbox] = useState([])
+  const [tweetsPlaces, setTweetsPlaces] = useState([])
+  const [tweetArrayFinal, setTweetArrayFinal] = useState([])
+  const [aboutPage, setAboutPage] = useState(false)
 
 
-  /* useEffect(()=>{
-    getWeather(SNE)
-  },[]) */
-
+ 
   /** @type React.MutableRefObject<HTMLInputElement> */
   const originRef = useRef()
   /** @type React.MutableRefObject<HTMLInputElement> */
@@ -59,22 +68,87 @@ function App() {
  },[markers])
  useEffect(()=>{
    getWeather(SNE)
+   getTweets()
+   /* getTweetsPosition() */
+
 },[])
-  /* if (!isLoaded) {
-    return <SkeletonText />
-  } */
   
+  const climateGeoFullURL2 = "https://corsanywhere.herokuapp.com/https://api.twitter.com/2/tweets/search/recent?tweet.fields=text&expansions=geo.place_id&place.fields=geo&query=(climatechange OR netzero) geo -is:retweet"
+  const climateBBOX = "https://corsanywhere.herokuapp.com/https://api.twitter.com/2/tweets/1525530659787259904?expansions=geo.place_id&place.fields=geo"
+  const climateGeoFullURL3 = "https://corsanywhere.herokuapp.com/https://api.twitter.com/2/tweets/search/recent?tweet.fields=&expansions=author_id,geo.place_id&place.fields=geo&query=(climatechange OR netzero) geo -is:retweet"
+  const specificFeed = "https://corsanywhere.herokuapp.com/https://api.twitter.com/2/tweets/search/recent?tweet.fields=&expansions=author_id,geo.place_id&place.fields=geo&query=(climatechange OR netzero) geo -is:retweet"
+  const allTweetInfoURL = "https://corsanywhere.herokuapp.com/https://api.twitter.com/2/tweets/search/recent?expansions=geo.place_id,author_id&place.fields=full_name,geo,name&query=(netzero OR climatechange) geo -is:retweet"
+
+  const headers = {
+    'Authorization':'Bearer AAAAAAAAAAAAAAAAAAAAAMOUagEAAAAAT%2FHx1qqtDijMyABuKFvZr3ZaJf0%3Dpn1And2lMZzsxZFV6eqlczo0SMNXiJPZzRdTmS8bRqFchXOOzU'
+    };
   const iconURL = (iconName) => `http://openweathermap.org/img/wn/${iconName}@2x.png`;
 
-  
+  const getTweets = async () => {
+    const response = await fetch (allTweetInfoURL,
+      {
+        method: 'GET',
+        headers: headers
+          })
+    const data = await response.json()
+    console.log(data.includes)
+     setTweets(data.data)
 
-  const getWeather = async(lat) => {
+    
+     getTweetsLocations()
+     /* setTweetsLocations(data.includes) */
+       }
+
+    /* const getTweetsPosition = async () => {
+       const response = await fetch (climateGeoFullURL3,
+          {
+          method: 'GET',
+          headers: headers
+            })
+      const data = await response.json()
+      setTweetsPlaces(data.includes.places)
+        } */
+
+
+
+
+    const getTweetsLocations = async () => {
+      const response = await fetch (allTweetInfoURL,
+        {
+          method: 'GET',
+          headers: headers
+            })
+      const data = await response.json()
+      console.log("testLoc",data.includes.places)
+      let arr =[]
+      data.includes.places.map((tweet) => {
+        /* console.log(tweet.id, tweet.geo.bbox) */
+        arr.push(tweet)
+        
+      })
+      /* console.log(arr) */
+      setTweetArrayFinal(arr)
+      
+      /* if(true){
+      let temp = data.includes.places[0].geo.bbox;
+    temp.splice(temp.length - 2, 2);
+      let tempObj = {
+        lat: temp[1],
+        lng: temp[0]
+      }
+      let updateArray = [...tweetArrayBbox, tempObj];
+      setTweetArrayBbox(updateArray)
+      }  */
+    }
+    /* console.log(tweetArrayBbox) */
+
+    console.log("theArr",tweetArrayFinal)
+ const getWeather = async(lat) => {
       const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?units=metric&lat=${lat.lat}&lon=${lat.lng}&appid=1c1726b14949cd9be2b66664ee76ae60`)
       const data = await response.json()
       setTemperature(data.main.temp)
       setIcon(data.weather[0].icon)
-      /* console.log(data.weather[0].icon)
-      console.log(data) */
+    
   }
   const onMapClick =((e) => {
     setMarkers({
@@ -83,14 +157,12 @@ function App() {
     );
     /* calculateRoute() */
   });
-  console.log("SNE", SNE)
-  console.log("markers", markers)
-  /* getWeather(SNE) */
+
   async function calculateRoute() {
     /* if (originRef.current.value === '' || destiantionRef.current.value === '') {
       return
     } */
-    console.log("infunc", SNE , markers)
+    /* console.log("infunc", SNE , markers) */
     // eslint-disable-next-line no-undef
     const directionsService = new google.maps.DirectionsService()
     const results = await directionsService.route({
@@ -121,6 +193,24 @@ function App() {
   if (loadError) return "Error";
   if (!isLoaded) return "Loading...";
 
+  const handleClose = () => {
+    console.log("hello")
+    setAboutPage(false)
+  }
+  const handleAbout = () => {
+    console.log("clicked")
+    setAboutPage(true)
+  }
+
+  const options = { closeBoxURL: '', enableEventPropagation: true };
+ 
+  const onLoad = infoBox => {
+    console.log('infoBox: ', infoBox)
+  };
+
+  
+  
+
   return (
     <Flex
       position='relative'
@@ -129,11 +219,11 @@ function App() {
       h='100vh'
       w='100vw'
     >
-      <div className='weatherBox'>
+      {/* <div className='weatherBox'>
         <p>Sustainable North East</p>
         <img src={iconURL(icon)} alt="icon" />
         <p>{`${temperature}C`}</p>
-    </div> 
+    </div>  */}
       <Box position='absolute' left={0} top={0} h='100%' w='100%'>
         {/* Google Map Box */}
         <GoogleMap
@@ -151,9 +241,50 @@ function App() {
           onClick={onMapClick}
         >
           <Marker position={center} />
+          {/* <Marker position={}/> */}
+          {tweetArrayFinal && (
+           tweetArrayFinal.map((tweet) => {
+              
+             return(
+             <Marker 
+             position={{lat: tweet.geo.bbox[1],lng: tweet.geo.bbox[0]}}
+             /* onMouseOver={((e) => {console.log(tweet.id)})} */
+             onMouseOver={((e) => {
+               <div style={{"width":"200px", "height":"200px", "zIndex":"4", "backgroundColor":"white"}}>
+                 <p>hello</p>
+               </div>
+             })}
+             
+             
+             />)
+              })
+            )}
+          
+         
           {directionsResponse && (
             <DirectionsRenderer directions={directionsResponse} />
           )}
+
+          {/* <Marker position={}/> */}
+          {/* {tweetArrayFinal && (
+          
+            tweetArrayFinal.map((tweet) => {
+                <Marker position={{lat: tweet.geo.bbox[1],lng: tweet.geo.bbox[0]}}/>
+             })
+          )} */}
+
+{/* <InfoBox
+      onLoad={onLoad}
+      options={options}
+      position={center}
+    >
+      <div style={{ backgroundColor: 'yellow', opacity: 0.75, padding: 12 }}>
+        <div style={{ fontSize: 16, fontColor: `#08233B` }}>
+          Hello, World!
+        </div>
+      </div>
+    </InfoBox> */}
+
         </GoogleMap>
       </Box>
       <Box
@@ -162,52 +293,65 @@ function App() {
         m={4}
         bgColor='white'
         shadow='base'
-        minW='container.md'
+        /* minW='container.md' */
+        w="60%"
         zIndex='1'
       >
-        <HStack spacing={2} justifyContent='space-between'>
-          {/* <Box flexGrow={1}>
-            <Autocomplete>
-              <Input type='text' placeholder='Origin' ref={originRef} />
-            </Autocomplete>
-          </Box>
-          <Box flexGrow={1}>
-            <Autocomplete>
-              <Input
-                type='text'
-                placeholder='Destination'
-                ref={destiantionRef}
-              />
-            </Autocomplete>
-          </Box> */}
+        <HStack spacing={2}  justifyContent='space-evenly'>
+          
 
+          <Text>Sustainable North East </Text>
+          {/* <Text>kf6013</Text> */}
+          <Image src={iconURL(icon)} alt="icon" w="60px" />
+        <Text>{`${temperature}C`}</Text>
+        </HStack>
+       {distance &&
+          <HStack spacing={20} mt={4} /* justifyContent='space-evenly' */>
+          <Text>Distance: {distance} </Text>
+          <Text>Duration: {duration} </Text>
           <ButtonGroup>
-            {/* <Button colorScheme='pink' type='submit' onClick={calculateRoute}>
-              Calculate Route
-            </Button> */}
-            <IconButton
+             <IconButton
               aria-label='center back'
               icon={<FaTimes />}
               onClick={clearRoute}
             />
           </ButtonGroup>
-          <Text>Sustainable North East </Text>
-          <Text>kf6013</Text>
-        </HStack>
-        <HStack spacing={4} mt={4} justifyContent='space-between'>
-          <Text>Distance: {distance} </Text>
-          <Text>Duration: {duration} </Text>
-          {/* <IconButton
-            aria-label='center back'
-            icon={<FaLocationArrow />}
-            isRound
-            onClick={() => {
-              map.panTo(center)
-              map.setZoom(15)
-            }}
-          /> */}
-        </HStack>
+          </HStack>
+          }         
       </Box>
+          <div className='aboutContainer' onClick={handleAbout}>
+            <p >{`About >>`}</p>
+          </div>
+
+         <div className='aboutPage' /* style={{"display":"none"}} */ style={aboutPage ? ({"display":"block"}):({"display":"none"})}>
+           {/* <button><FaTimes onClick={console.log("hello")}/></button> */}
+           <ButtonGroup>
+             <IconButton
+              aria-label='center back'
+              p={4}
+              m={4}
+              icon={<FaTimes />}
+              onClick={handleClose}
+            />
+          </ButtonGroup>
+          <h1 style={{"textAlign":"center"}}>About Page</h1>
+           </div>   
+
+      <div className='twitterFeed'>
+        <h1 style={{"fontSize":"14px", "marginTop":"30px"}}>Latest Tweets including #netZero or #climateChange</h1>
+     <ul style={{"height":"100%"}}>        
+     {tweets && (
+            tweets.map((tweet) => {
+             return(<>
+                  <p>username: {tweet.author_id}</p>
+               <li>{tweet.text}</li>
+               </>
+             ) 
+            })
+          )}
+          </ul>
+          </div>
+         
     </Flex>
   )
 }

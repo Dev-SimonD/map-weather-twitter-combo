@@ -28,6 +28,7 @@ body {
     box-shadow: 0 .5em 1em -.125em rgba(10,10,10,.1),0 0 0 1px rgba(10,10,10,.02);
   }
   .twitterFeed{
+    z-index: 3;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -36,8 +37,46 @@ body {
     border-radius: 10px;
     padding: 10px;
     width: 30%;
-    font-size: 12px;
+    height: 300px;
+    overflow: auto;
+    font-size: 10px;
+    position: absolute;
+    right: 10px;
+    top: 150px;
     box-shadow: 0 .5em 1em -.125em rgba(10,10,10,.1),0 0 0 1px rgba(10,10,10,.02);
+  }
+  .aboutContainer{
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    right: 0;
+    top: 10px;
+    width: 100px;
+    height: 40px;
+    background-color: white;
+    border-radius: 10px 0 0 10px;
+  }
+  .aboutContainer:hover{
+    background-color: white;
+    width: 110px;
+    height: 40px;
+    color: black;
+  }
+  .aboutPage{
+    height: 100%;
+    width: 50%;
+    background-color: white;
+    position: absolute;
+    right: 0;
+    z-index: 10;
+    /* animation: mymove 1s ease-in-out; */
+  }
+            
+  @keyframes mymove {
+    from {right: -400px; opacity: 50%;}
+    to {left: 0px; opacity: 100%;}
   }
   .dirDesBox{
     z-index: 2;
