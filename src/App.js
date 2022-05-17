@@ -25,8 +25,10 @@ import {
 import { useRef, useState, useCallback, useEffect } from 'react'
 import React from 'react'
 import TwitterFeed from './TwitterFeed'
-
+/* import { getGlobalLock } from 'framer-motion/types/gestures/drag/utils/lock'
+ */
 const center = {lat:54.976489, lng:-1.60786674}
+
 
 
 function App() {
@@ -55,9 +57,11 @@ function App() {
   const [tweetsPlaces, setTweetsPlaces] = useState([])
   const [tweetArrayFinal, setTweetArrayFinal] = useState([])
   const [aboutPage, setAboutPage] = useState(false)
-  const [a,setA] = useState()
-  const [b,setB] = useState()
+  const [atweet,setAtweet] = useState()
+  const [btweet,setBtweet] = useState()
   const [twitterFeed,setTwitterFeed] = useState()
+  const [defined,setDefined] = useState(true)
+  const [definedb,setDefinedb] = useState(true)
 
 
 
@@ -66,16 +70,18 @@ function App() {
   const originRef = useRef()
   /** @type React.MutableRefObject<HTMLInputElement> */
   const destiantionRef = useRef()
+  
   useEffect(()=>{
     getWeather(markers)
     calculateRoute()
  },[markers])
  useEffect(()=>{
-   getWeather(SNE)
-   getTweets()
-   /* getTweetsPosition() */
+  getWeather(SNE)
+  getTweets()
+  /* getTweetsPosition() */
 
 },[])
+ 
   
   const climateGeoFullURL2 = "https://corsanywhere.herokuapp.com/https://api.twitter.com/2/tweets/search/recent?tweet.fields=text&expansions=geo.place_id&place.fields=geo&query=(climatechange OR netzero) geo -is:retweet"
   const climateBBOX = "https://corsanywhere.herokuapp.com/https://api.twitter.com/2/tweets/1525530659787259904?expansions=geo.place_id&place.fields=geo"
@@ -83,7 +89,7 @@ function App() {
   const specificFeed = "https://corsanywhere.herokuapp.com/https://api.twitter.com/2/tweets/search/recent?tweet.fields=&expansions=author_id,geo.place_id&place.fields=geo&query=(climatechange OR netzero) geo -is:retweet"
   const allTweetInfoURL = "https://corsanywhere.herokuapp.com/https://api.twitter.com/2/tweets/search/recent?expansions=geo.place_id,author_id&place.fields=full_name,geo,name&query=(netzero OR climatechange) geo -is:retweet"
   const recentTweetWithAuthor = "https://corsanywhere.herokuapp.com/https://api.twitter.com/2/tweets/search/recent?expansions=author_id&user.fields=username&query=(netzero OR climatechange) -is:retweet"
-
+ 
   const headers = {
     'Authorization':'Bearer AAAAAAAAAAAAAAAAAAAAAMOUagEAAAAAT%2FHx1qqtDijMyABuKFvZr3ZaJf0%3Dpn1And2lMZzsxZFV6eqlczo0SMNXiJPZzRdTmS8bRqFchXOOzU'
     };
@@ -96,35 +102,80 @@ function App() {
         headers: headers
           })
     const data = await response.json()
+    
     console.log(data.data)
       console.log(data.includes.users)
-      setA(data.data)
-      setB(data.includes.users)
-      let arr = []
-      a.map((tweet) => {
+      setAtweet(data.data)
+     
+      /* getB() */
+      /* console.log(data.data)
+        console.log(data.includes.users) */
         
-       b.map((name) => {
+     /*  setBtweet(data.includes.users)
+     
+     
+     let arr = []
+      atweet.map((tweet) => {
+        
+       btweet.map((name) => {
         if(tweet.author_id === name.id)
-        {
-          /* console.log(tweet.text)
-          console.log(name.name) */
-          
-let obj = {theText: tweet.text,theUser: name.name};
-
-arr.push(obj);
+        {        
+        let obj = {theText: tweet.text,theUser: name.name};
+          arr.push(obj);
         }
        })
-      })
+      }) 
 console.log("xxxxxxxx",arr)
-setTwitterFeed(arr)
-
-      
+setTwitterFeed(arr) */
+/* console.log("atweet",atweet) */
+   
      /* setTweets(data.data) */
 
     
      /* getTweetsLocations() */
      /* setTweetsLocations(data.includes) */
        }
+       const getB = async () => {
+        const response = await fetch (recentTweetWithAuthor,
+          {
+            method: 'GET',
+            headers: headers
+              })
+        const data = await response.json()
+        setBtweet(data.includes.users)
+            }
+            const getC = () => {
+              let arr = []
+              atweet.map((tweet) => {
+                
+               btweet.map((name) => {
+                if(tweet.author_id === name.id)
+                {        
+                let obj = {theText: tweet.text,theUser: name.name};
+                  arr.push(obj);
+                }
+               })
+              }) 
+        console.log("xxxxxxxx",arr)
+        setTwitterFeed(arr)
+            }
+     
+       
+        
+       
+
+       if(atweet != null && defined == true){
+        getB()
+        setDefined(false)
+       }
+       if(btweet != null && definedb == true){
+        getC()
+        setDefinedb(false)
+       }
+
+      
+      
+      
 
     /* const getTweetsPosition = async () => {
        const response = await fetch (climateGeoFullURL3,
@@ -137,9 +188,27 @@ setTwitterFeed(arr)
         } */
 
 
-console.log("a ",a)
-console.log("b" ,b)
+/* console.log("a ",a)
+console.log("b" ,b) */
 
+/* const getTweetObject = () => {
+  let arr = []
+      a.map((tweet) => {
+        
+       b.map((name) => {
+        if(tweet.author_id === name.id)
+        {
+        
+          
+let obj = {theText: tweet.text,theUser: name.name};
+
+arr.push(obj);
+        }
+       })
+      }) 
+console.log("xxxxxxxx",arr)
+setTwitterFeed(arr)
+} */
   
 
     const getTweetsLocations = async () => {
@@ -239,7 +308,9 @@ console.log("b" ,b)
   }; */
 
   
+  console.log("atweet",atweet)
   
+
 
   return (
     <Flex
@@ -384,7 +455,10 @@ console.log("b" ,b)
 
 <div className='twitterFeed'>
         <h1 style={{"fontSize":"14px", "marginTop":"30px"}}>Latest Tweets including #netZero or #climateChange</h1>
-     <ul style={{"height":"100%"}}>        
+     <ul style={{"height":"100%","width":"100%"}}>        
+     
+     
+     
      {twitterFeed && (
     twitterFeed.map((tweet) =>
     <div>
