@@ -59,10 +59,11 @@ body {
     border-radius: 10px 0 0 10px;
   }
   .aboutContainer:hover{
-    background-color: white;
-    width: 110px;
+    background-color: rgb(223, 223, 223);
+    width: 100px;
     height: 40px;
     color: black;
+    animation-duration: 2s;
   }
   .aboutPage{
     height: 100%;

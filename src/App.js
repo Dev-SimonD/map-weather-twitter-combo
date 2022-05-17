@@ -55,6 +55,10 @@ function App() {
   const [tweetsPlaces, setTweetsPlaces] = useState([])
   const [tweetArrayFinal, setTweetArrayFinal] = useState([])
   const [aboutPage, setAboutPage] = useState(false)
+  const [a,setA] = useState()
+  const [b,setB] = useState()
+  const [twitterFeed,setTwitterFeed] = useState()
+
 
 
  
@@ -78,6 +82,7 @@ function App() {
   const climateGeoFullURL3 = "https://corsanywhere.herokuapp.com/https://api.twitter.com/2/tweets/search/recent?tweet.fields=&expansions=author_id,geo.place_id&place.fields=geo&query=(climatechange OR netzero) geo -is:retweet"
   const specificFeed = "https://corsanywhere.herokuapp.com/https://api.twitter.com/2/tweets/search/recent?tweet.fields=&expansions=author_id,geo.place_id&place.fields=geo&query=(climatechange OR netzero) geo -is:retweet"
   const allTweetInfoURL = "https://corsanywhere.herokuapp.com/https://api.twitter.com/2/tweets/search/recent?expansions=geo.place_id,author_id&place.fields=full_name,geo,name&query=(netzero OR climatechange) geo -is:retweet"
+  const recentTweetWithAuthor = "https://corsanywhere.herokuapp.com/https://api.twitter.com/2/tweets/search/recent?expansions=author_id&user.fields=username&query=(netzero OR climatechange) -is:retweet"
 
   const headers = {
     'Authorization':'Bearer AAAAAAAAAAAAAAAAAAAAAMOUagEAAAAAT%2FHx1qqtDijMyABuKFvZr3ZaJf0%3Dpn1And2lMZzsxZFV6eqlczo0SMNXiJPZzRdTmS8bRqFchXOOzU'
@@ -85,17 +90,39 @@ function App() {
   const iconURL = (iconName) => `http://openweathermap.org/img/wn/${iconName}@2x.png`;
 
   const getTweets = async () => {
-    const response = await fetch (allTweetInfoURL,
+    const response = await fetch (recentTweetWithAuthor,
       {
         method: 'GET',
         headers: headers
           })
     const data = await response.json()
-    console.log(data.includes)
-     setTweets(data.data)
+    console.log(data.data)
+      console.log(data.includes.users)
+      setA(data.data)
+      setB(data.includes.users)
+      let arr = []
+      a.map((tweet) => {
+        
+       b.map((name) => {
+        if(tweet.author_id === name.id)
+        {
+          /* console.log(tweet.text)
+          console.log(name.name) */
+          
+let obj = {theText: tweet.text,theUser: name.name};
+
+arr.push(obj);
+        }
+       })
+      })
+console.log("xxxxxxxx",arr)
+setTwitterFeed(arr)
+
+      
+     /* setTweets(data.data) */
 
     
-     getTweetsLocations()
+     /* getTweetsLocations() */
      /* setTweetsLocations(data.includes) */
        }
 
@@ -110,7 +137,10 @@ function App() {
         } */
 
 
+console.log("a ",a)
+console.log("b" ,b)
 
+  
 
     const getTweetsLocations = async () => {
       const response = await fetch (allTweetInfoURL,
@@ -202,11 +232,11 @@ function App() {
     setAboutPage(true)
   }
 
-  const options = { closeBoxURL: '', enableEventPropagation: true };
+ /*  const options = { closeBoxURL: '', enableEventPropagation: true };
  
   const onLoad = infoBox => {
     console.log('infoBox: ', infoBox)
-  };
+  }; */
 
   
   
@@ -320,7 +350,7 @@ function App() {
           }         
       </Box>
           <div className='aboutContainer' onClick={handleAbout}>
-            <p >{`About >>`}</p>
+            <p >{`About >`}</p>
           </div>
 
          <div className='aboutPage' /* style={{"display":"none"}} */ style={aboutPage ? ({"display":"block"}):({"display":"none"})}>
@@ -337,7 +367,7 @@ function App() {
           <h1 style={{"textAlign":"center"}}>About Page</h1>
            </div>   
 
-      <div className='twitterFeed'>
+      {/* <div className='twitterFeed'>
         <h1 style={{"fontSize":"14px", "marginTop":"30px"}}>Latest Tweets including #netZero or #climateChange</h1>
      <ul style={{"height":"100%"}}>        
      {tweets && (
@@ -350,7 +380,23 @@ function App() {
             })
           )}
           </ul>
+          </div> */}
+
+<div className='twitterFeed'>
+        <h1 style={{"fontSize":"14px", "marginTop":"30px"}}>Latest Tweets including #netZero or #climateChange</h1>
+     <ul style={{"height":"100%"}}>        
+     {twitterFeed && (
+    twitterFeed.map((tweet) =>
+    <div>
+      <li><b>{tweet.theUser}</b></li>
+      <li style={{"listStyleType":"none"}}>{tweet.theText}</li>
+    </div>
+    )
+     )}
+    </ul>
           </div>
+
+        
          
     </Flex>
   )
