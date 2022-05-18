@@ -54,6 +54,16 @@ body {
     font-size: 14px;
     text-align: justify;
   }
+  .details{
+    width: 200px;
+    height: 100px;
+    background-color: white;
+    border-radius: 10px;
+    position: absolute;
+    z-index: 1000;
+    padding: 10px;
+  
+  }
   .aboutContainer{
     cursor: pointer;
     display: flex;

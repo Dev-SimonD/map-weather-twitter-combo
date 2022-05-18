@@ -62,6 +62,7 @@ function App() {
   const [twitterFeed,setTwitterFeed] = useState()
   const [defined,setDefined] = useState(true)
   const [definedb,setDefinedb] = useState(true)
+  const [detailsCoor,setDetailsCoor] = useState()
 
 
 
@@ -78,7 +79,7 @@ function App() {
  useEffect(()=>{
   getWeather(SNE)
   getTweets()
-  /* getTweetsPosition() */
+  getTweetsPosition()
 
 },[])
  
@@ -89,6 +90,7 @@ function App() {
   const specificFeed = "https://corsanywhere.herokuapp.com/https://api.twitter.com/2/tweets/search/recent?tweet.fields=&expansions=author_id,geo.place_id&place.fields=geo&query=(climatechange OR netzero) geo -is:retweet"
   const allTweetInfoURL = "https://corsanywhere.herokuapp.com/https://api.twitter.com/2/tweets/search/recent?expansions=geo.place_id,author_id&place.fields=full_name,geo,name&query=(netzero OR climatechange) geo -is:retweet"
   const recentTweetWithAuthor = "https://corsanywhere.herokuapp.com/https://api.twitter.com/2/tweets/search/recent?expansions=author_id&user.fields=username&query=(netzero OR climatechange) -is:retweet"
+  const locationTweetUrl = "https://corsanywhere.herokuapp.com/https://api.twitter.com/2/tweets?tweet.fields=geo,source&expansions=geo.place_id,author_id&place.fields=full_name,geo,name&ids=1526727795778408450,1526749429155475458,1526750935732703232"
  
   const headers = {
     'Authorization':'Bearer AAAAAAAAAAAAAAAAAAAAAMOUagEAAAAAT%2FHx1qqtDijMyABuKFvZr3ZaJf0%3Dpn1And2lMZzsxZFV6eqlczo0SMNXiJPZzRdTmS8bRqFchXOOzU'
@@ -103,38 +105,12 @@ function App() {
           })
     const data = await response.json()
     
-    console.log(data.data)
-      console.log(data.includes.users)
+    /* console.log(data.data)
+      console.log(data.includes.users) */
       setAtweet(data.data)
-     
-      /* getB() */
-      /* console.log(data.data)
-        console.log(data.includes.users) */
-        
-     /*  setBtweet(data.includes.users)
-     
-     
-     let arr = []
-      atweet.map((tweet) => {
-        
-       btweet.map((name) => {
-        if(tweet.author_id === name.id)
-        {        
-        let obj = {theText: tweet.text,theUser: name.name};
-          arr.push(obj);
-        }
-       })
-      }) 
-console.log("xxxxxxxx",arr)
-setTwitterFeed(arr) */
-/* console.log("atweet",atweet) */
-   
-     /* setTweets(data.data) */
+         }
 
-    
-     /* getTweetsLocations() */
-     /* setTweetsLocations(data.includes) */
-       }
+
        const getB = async () => {
         const response = await fetch (recentTweetWithAuthor,
           {
@@ -156,7 +132,7 @@ setTwitterFeed(arr) */
                 }
                })
               }) 
-        console.log("xxxxxxxx",arr)
+       /*  console.log("xxxxxxxx",arr) */
         setTwitterFeed(arr)
             }
      
@@ -177,39 +153,20 @@ setTwitterFeed(arr) */
       
       
 
-    /* const getTweetsPosition = async () => {
-       const response = await fetch (climateGeoFullURL3,
+    const getTweetsPosition = async () => {
+       const response = await fetch (locationTweetUrl,
           {
           method: 'GET',
           headers: headers
             })
       const data = await response.json()
-      setTweetsPlaces(data.includes.places)
-        } */
+     console.log(data)
+     console.log(data.data)
+     console.log(data.includes.users)
+     console.log(data.includes.places)
+        } 
 
 
-/* console.log("a ",a)
-console.log("b" ,b) */
-
-/* const getTweetObject = () => {
-  let arr = []
-      a.map((tweet) => {
-        
-       b.map((name) => {
-        if(tweet.author_id === name.id)
-        {
-        
-          
-let obj = {theText: tweet.text,theUser: name.name};
-
-arr.push(obj);
-        }
-       })
-      }) 
-console.log("xxxxxxxx",arr)
-setTwitterFeed(arr)
-} */
-  
 
     const getTweetsLocations = async () => {
       const response = await fetch (allTweetInfoURL,
@@ -218,7 +175,7 @@ setTwitterFeed(arr)
           headers: headers
             })
       const data = await response.json()
-      console.log("testLoc",data.includes.places)
+     /*  console.log("testLoc",data.includes.places) */
       let arr =[]
       data.includes.places.map((tweet) => {
         /* console.log(tweet.id, tweet.geo.bbox) */
@@ -241,7 +198,7 @@ setTwitterFeed(arr)
     }
     /* console.log(tweetArrayBbox) */
 
-    console.log("theArr",tweetArrayFinal)
+    /* console.log("theArr",tweetArrayFinal) */
  const getWeather = async(lat) => {
       const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?units=metric&lat=${lat.lat}&lon=${lat.lng}&appid=1c1726b14949cd9be2b66664ee76ae60`)
       const data = await response.json()
@@ -293,11 +250,11 @@ setTwitterFeed(arr)
   if (!isLoaded) return "Loading...";
 
   const handleClose = () => {
-    console.log("hello")
+    /* console.log("hello") */
     setAboutPage(false)
   }
   const handleAbout = () => {
-    console.log("clicked")
+    /* console.log("clicked") */
     setAboutPage(true)
   }
 
@@ -314,9 +271,22 @@ setTwitterFeed(arr)
   }; */
 
   
-  console.log("atweet",atweet)
-  
+  /* console.log("atweet",atweet) */
+  const showDetails = (e) => {
+    /* console.log(e.domEvent.clientX) */
+    let coorX = e.domEvent.clientX
+      let coorY = e.domEvent.clientY
+      let tempObj = {
+        tempX: `${coorX}px`,
+        tempY: `${coorY}px`
+      }
+    return(
+      
+        setDetailsCoor(tempObj)
 
+    )
+  }
+  /* console.log("coor",detailsCoor) */
 
   return (
     <Flex
@@ -331,6 +301,12 @@ setTwitterFeed(arr)
         <img src={iconURL(icon)} alt="icon" />
         <p>{`${temperature}C`}</p>
     </div>  */}
+
+{detailsCoor && (
+<div className='details' style={{"top": detailsCoor.tempY,"left":detailsCoor.tempX}}>
+            <p>Sustainable North East HQ</p>
+            </div>
+       )}
       <Box position='absolute' left={0} top={0} h='100%' w='100%'>
         {/* Google Map Box */}
         <GoogleMap
@@ -347,7 +323,14 @@ setTwitterFeed(arr)
           onLoad={onMapLoad}
           onClick={onMapClick}
         >
-          <Marker position={center} />
+          <Marker position={center} 
+          onMouseOver={(e) => showDetails(e)}
+          onMouseOut={(e) => setDetailsCoor({
+            tempX: "-1000px",
+            tempY: "-1000px"
+                    })}
+          
+          />
           {/* <Marker position={}/> */}
           {tweetArrayFinal && (
            tweetArrayFinal.map((tweet) => {
@@ -442,11 +425,11 @@ setTwitterFeed(arr)
             />
           </ButtonGroup>
           <h1 style={{"textAlign":"center"}}>Welcome to Sustainable North East</h1><br/>
-          <p>Please, feel free to click on the map to retrieve the local weather information</p> 
-            <p>By clicking on the map you will be also prompted with the directions to our HQ
+          <p>Please, feel free to click on the map to retrieve the local weather information.</p> 
+            <p>By clicking on the map you will be also prompted with the directions to the HQ
           </p><br/>
-          <p>This website also contains a tweet feed with the latest #netZero and #climatechange tweets and 
-            shows markers on the map where tweets onclude geo location.
+          <p>This website also contains a tweet feed with the latest #netZero and #climatechange tweets.
+             Markers show tweets with geo-location.
           </p>
            </div>   
 
