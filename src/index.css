@@ -45,6 +45,15 @@ body {
     top: 150px;
     box-shadow: 0 .5em 1em -.125em rgba(10,10,10,.1),0 0 0 1px rgba(10,10,10,.02);
   }
+  .twitterFeed h1{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .aboutPage p{
+    font-size: 14px;
+    text-align: justify;
+  }
   .aboutContainer{
     cursor: pointer;
     display: flex;
@@ -72,6 +81,7 @@ body {
     position: absolute;
     right: 0;
     z-index: 10;
+    padding: 10px;
     /* animation: mymove 1s ease-in-out; */
   }
             

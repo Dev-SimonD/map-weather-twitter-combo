@@ -10,7 +10,7 @@ import {
   SkeletonText,
   Text,
 } from '@chakra-ui/react'
-import { FaLocationArrow, FaTimes } from 'react-icons/fa'
+import { FaLocationArrow, FaTimes, FaRedoAlt } from 'react-icons/fa'
 
 import {
   useJsApiLoader,
@@ -301,6 +301,12 @@ setTwitterFeed(arr)
     setAboutPage(true)
   }
 
+  const refreshTweet = () => {
+    setDefined(true)
+    setDefinedb(true)
+    getTweets()
+  }
+
  /*  const options = { closeBoxURL: '', enableEventPropagation: true };
  
   const onLoad = infoBox => {
@@ -435,7 +441,13 @@ setTwitterFeed(arr)
               onClick={handleClose}
             />
           </ButtonGroup>
-          <h1 style={{"textAlign":"center"}}>About Page</h1>
+          <h1 style={{"textAlign":"center"}}>Welcome to Sustainable North East</h1><br/>
+          <p>Please, feel free to click on the map to retrieve the local weather information</p> 
+            <p>By clicking on the map you will be also prompted with the directions to our HQ
+          </p><br/>
+          <p>This website also contains a tweet feed with the latest #netZero and #climatechange tweets and 
+            shows markers on the map where tweets onclude geo location.
+          </p>
            </div>   
 
       {/* <div className='twitterFeed'>
@@ -454,7 +466,21 @@ setTwitterFeed(arr)
           </div> */}
 
 <div className='twitterFeed'>
-        <h1 style={{"fontSize":"14px", "marginTop":"30px"}}>Latest Tweets including #netZero or #climateChange</h1>
+
+            <div style={{"width":"100%","height":"100%" }}>
+              <div style={{"display":"flex"}}>
+        <h1 style={{"fontSize":"14px"}}>Latest Tweets including #netZero or #climateChange</h1> <ButtonGroup>
+             <IconButton
+              aria-label='center back'
+              p={4}
+              m={4}
+              icon={<FaRedoAlt />}
+              onClick={refreshTweet
+                
+              }
+            />
+          </ButtonGroup>
+          </div>
      <ul style={{"height":"100%","width":"100%"}}>        
      
      
@@ -468,6 +494,7 @@ setTwitterFeed(arr)
     )
      )}
     </ul>
+    </div>
           </div>
 
         
