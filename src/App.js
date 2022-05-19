@@ -9,6 +9,7 @@ import {
   Input,
   SkeletonText,
   Text,
+  AlertDialogCloseButton,
 } from '@chakra-ui/react'
 import { FaLocationArrow, FaTimes, FaRedoAlt } from 'react-icons/fa'
 
@@ -63,9 +64,40 @@ function App() {
   const [defined,setDefined] = useState(true)
   const [definedb,setDefinedb] = useState(true)
   const [detailsCoor,setDetailsCoor] = useState()
+  const [markerTweet,setMarkerTweet] = useState()
+  const [markerTweetUsers,setMarkerTweetUsers] = useState()
+  const [markerTweetPlaces,setMarkerTweetPlaces] = useState()
+  const [route,setRoute] = useState(false)
+  const [randomText,setRandomText] = useState(null)
 
 
-
+   const [randomMarkers,setRandomMaekers] = useState([{
+     name: "Jeremy",
+     text: "This is about climatechange",
+     
+      lat:53.2553663,
+      lng:-1.4245245
+     
+      
+        
+    },
+  {
+    name: "Alias",
+    text: "This is about netzero",
+    
+    lat:54.2553663,
+     lng:-1.6245245
+    
+  },
+  {
+    name: "simonDev",
+    text: "This is about netzero and climatechange",
+    
+    lat:53.6553663,
+    lng:-1.8245245
+    
+  },
+  ])
  
   /** @type React.MutableRefObject<HTMLInputElement> */
   const originRef = useRef()
@@ -160,10 +192,13 @@ function App() {
           headers: headers
             })
       const data = await response.json()
-     console.log(data)
+     /* console.log(data)
      console.log(data.data)
      console.log(data.includes.users)
-     console.log(data.includes.places)
+     console.log(data.includes.places) */
+     setMarkerTweet(data.data)
+     setMarkerTweetUsers(data.includes.users)
+     setMarkerTweetPlaces(data.includes.places)
         } 
 
 
@@ -232,12 +267,14 @@ function App() {
     setDirectionsResponse(results)
     setDistance(results.routes[0].legs[0].distance.text)
     setDuration(results.routes[0].legs[0].duration.text)
+    setRoute(true)
   }
 
   function clearRoute() {
     setDirectionsResponse(null)
     setDistance('')
     setDuration('')
+    setRoute(false)
     /* originRef.current.value = ''
     destiantionRef.current.value = '' */
   }
@@ -269,11 +306,25 @@ function App() {
   const onLoad = infoBox => {
     console.log('infoBox: ', infoBox)
   }; */
+/*   const showDetailsMarker = (e) => {
 
+    let coorX = e.domEvent.clientX
+      let coorY = e.domEvent.clientY
+      let tempObj = {
+        tempX: `${coorX}px`,
+        tempY: `${coorY}px`
+      }
+    return(
+      
+        setDetailsCoorMarker(tempObj)
+
+    )
+  } */
   
   /* console.log("atweet",atweet) */
   const showDetails = (e) => {
     /* console.log(e.domEvent.clientX) */
+    console.log("show", e)
     let coorX = e.domEvent.clientX
       let coorY = e.domEvent.clientY
       let tempObj = {
@@ -286,7 +337,27 @@ function App() {
 
     )
   }
-  /* console.log("coor",detailsCoor) */
+  const showText = (Text) => {
+    let tempObj = {
+      text: Text.text,
+      name: Text.name
+    }
+    return(
+    setRandomText(tempObj)
+    )
+  }
+
+  const handleMouseOut = () => {
+    
+      setRandomText(null)
+      setDetailsCoor(null)
+    
+  }
+  /* console.log("tweet",markerTweet)
+  console.log("users",markerTweetUsers)
+  console.log("places",markerTweetPlaces) */
+  console.log(randomMarkers)
+  console.log(randomText)
 
   return (
     <Flex
@@ -304,7 +375,9 @@ function App() {
 
 {detailsCoor && (
 <div className='details' style={{"top": detailsCoor.tempY,"left":detailsCoor.tempX}}>
+          {randomText ? (<div><b><h1>{randomText.name}</h1></b><p style={{"fontSize":"12px"}}>{randomText.text}</p></div>):(
             <p>Sustainable North East HQ</p>
+            )}
             </div>
        )}
       <Box position='absolute' left={0} top={0} h='100%' w='100%'>
@@ -331,7 +404,43 @@ function App() {
                     })}
           
           />
-          {/* <Marker position={}/> */}
+          {/* {randomMarkers && (randomMarkers.map((random) => {
+            return(
+            <Marker position={{lat: random.lat, lng: random.lng}} 
+            onMouseOver={(random) => showDetails(random)}
+            onMouseOut={(random) => setDetailsCoor({
+              tempX: "-1000px",
+            tempY: "-1000px"
+            })}
+                      
+            />
+            )
+          }))} */}
+
+          <Marker 
+          position={{lat: randomMarkers[0].lat, lng: randomMarkers[0].lng}}
+          onMouseOver={(e) => {
+              showDetails(e)
+              showText(randomMarkers[0])}}
+          onMouseOut={handleMouseOut}
+          
+          />
+          <Marker 
+          position={{lat: randomMarkers[1].lat, lng: randomMarkers[1].lng}}
+          onMouseOver={(e) => {
+            showDetails(e)
+            showText(randomMarkers[1])}}
+        onMouseOut={handleMouseOut}
+          />
+          <Marker 
+          position={{lat: randomMarkers[2].lat, lng: randomMarkers[2].lng}}
+          onMouseOver={(e) => {
+            showDetails(e)
+            showText(randomMarkers[2])}}
+        onMouseOut={handleMouseOut}
+          />
+         
+          
           {tweetArrayFinal && (
            tweetArrayFinal.map((tweet) => {
               
@@ -448,6 +557,7 @@ function App() {
           </ul>
           </div> */}
 
+{route ? (""):(
 <div className='twitterFeed'>
 
             <div style={{"width":"100%","height":"100%" }}>
@@ -480,7 +590,7 @@ function App() {
     </div>
           </div>
 
-        
+)}
          
     </Flex>
   )
