@@ -136,7 +136,7 @@ function App() {
         }
 
  const getWeather = async(lat) => {
-      const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?units=metric&lat=${lat.lat}&lon=${lat.lng}&appid=1c1726b14949cd9be2b66664ee76ae60`)
+      const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?units=metric&lat=${lat.lat}&lon=${lat.lng}&appid=<YOURAPIKEY>`)
       const data = await response.json()
       setTemperature(data.main.temp)
       setIcon(data.weather[0].icon)
